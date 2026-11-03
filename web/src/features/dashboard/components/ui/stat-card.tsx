@@ -17,13 +17,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import type { LucideIcon } from 'lucide-react'
-import { useId, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-import { IconBadge, type IconBadgeTone } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
-type StatCardTone = 'accent-1' | 'accent-2' | 'accent-3'
 type StatCardSparklineVariant = 'bars' | 'line'
 type StatCardDetailTone =
   | 'default'
@@ -46,34 +44,15 @@ interface StatCardProps {
   sparkline?: number[]
   sparklineVariant?: StatCardSparklineVariant
   details?: StatCardDetail[]
-  tone?: StatCardTone
   loading?: boolean
   error?: boolean
   action?: ReactNode
-  iconTone?: IconBadgeTone
-  compactMobile?: boolean
 }
 
-const TONE_CLASSES: Record<StatCardTone, string> = {
-  'accent-1':
-    'from-overview-accent-1/80 via-overview-accent-1/45 to-overview-accent-1/5 dark:from-overview-accent-1/70 dark:via-overview-accent-1/30',
-  'accent-2':
-    'from-overview-accent-2/80 via-overview-accent-2/45 to-overview-accent-2/5 dark:from-overview-accent-2/70 dark:via-overview-accent-2/30',
-  'accent-3':
-    'from-overview-accent-3/80 via-overview-accent-3/45 to-overview-accent-3/5 dark:from-overview-accent-3/70 dark:via-overview-accent-3/30',
-}
-
-const LINE_TONE_CLASSES: Record<StatCardTone, string> = {
-  'accent-1': 'text-overview-accent-1',
-  'accent-2': 'text-overview-accent-2',
-  'accent-3': 'text-overview-accent-3',
-}
-
-const ICON_TONE_BY_STAT_TONE: Record<StatCardTone, IconBadgeTone> = {
-  'accent-1': 'chart-1',
-  'accent-2': 'chart-2',
-  'accent-3': 'chart-3',
-}
+/* Keep labels quiet and figures prominent; colors and corners follow the theme. */
+const OVERLINE_CLASS = 'font-medium text-muted-foreground'
+const VALUE_CLASS =
+  'font-semibold text-4xl leading-tight tracking-[-0.03em] tabular-nums break-words text-foreground sm:text-5xl'
 
 const DETAIL_TONE_CLASSES: Record<StatCardDetailTone, string> = {
   default: 'text-foreground',
@@ -144,19 +123,14 @@ function buildLineSparkline(values?: number[]) {
   }
 }
 
-function LineSparkline(props: { values?: number[]; tone: StatCardTone }) {
-  const rawGradientId = useId()
-  const gradientId = `stat-card-line-${rawGradientId.replaceAll(':', '')}`
+function LineSparkline(props: { values?: number[] }) {
   const paths = buildLineSparkline(props.values)
 
-  if (!paths) return <div className='h-8' aria-hidden='true' />
+  if (!paths) return <div className='h-10' aria-hidden='true' />
 
   return (
     <div
-      className={cn(
-        'relative h-8 overflow-hidden rounded-lg',
-        LINE_TONE_CLASSES[props.tone]
-      )}
+      className='text-primary/70 relative h-10 overflow-hidden'
       aria-hidden='true'
     >
       <svg
@@ -164,20 +138,34 @@ function LineSparkline(props: { values?: number[]; tone: StatCardTone }) {
         preserveAspectRatio='none'
         className='size-full'
       >
-        <defs>
-          <linearGradient id={gradientId} x1='0' x2='0' y1='0' y2='1'>
-            <stop offset='0%' stopColor='currentColor' stopOpacity='0.24' />
-            <stop offset='100%' stopColor='currentColor' stopOpacity='0' />
-          </linearGradient>
-        </defs>
-        <path d={paths.areaPath} fill={`url(#${gradientId})`} />
+        <line
+          x1='0'
+          x2='160'
+          y1='12'
+          y2='12'
+          className='stroke-border'
+          strokeWidth='1'
+          strokeDasharray='2 4'
+          vectorEffect='non-scaling-stroke'
+        />
+        <line
+          x1='0'
+          x2='160'
+          y1='24'
+          y2='24'
+          className='stroke-border'
+          strokeWidth='1'
+          strokeDasharray='2 4'
+          vectorEffect='non-scaling-stroke'
+        />
+        <path d={paths.areaPath} fill='currentColor' fillOpacity='0.07' />
         <path
           d={paths.linePath}
           fill='none'
           stroke='currentColor'
           strokeLinecap='round'
           strokeLinejoin='round'
-          strokeWidth='2.25'
+          strokeWidth='1.25'
           vectorEffect='non-scaling-stroke'
         />
       </svg>
@@ -185,18 +173,17 @@ function LineSparkline(props: { values?: number[]; tone: StatCardTone }) {
   )
 }
 
-function BarSparkline(props: { values?: number[]; tone: StatCardTone }) {
+function BarSparkline(props: { values?: number[] }) {
   const sparkline = normalizeSparkline(props.values)
 
   return (
-    <div className='flex h-8 items-end gap-1' aria-hidden='true'>
+    <div className='flex h-10 items-end gap-1' aria-hidden='true'>
       {sparkline.map((bucket) => (
         <span
           key={bucket.position}
           className={cn(
-            'flex-1 rounded-t-sm bg-linear-to-t',
-            bucket.height <= 0 && 'opacity-20',
-            TONE_CLASSES[props.tone]
+            'flex-1 rounded-sm',
+            bucket.height <= 0 ? 'bg-border' : 'bg-primary/70'
           )}
           style={{ height: `${bucket.height}%` }}
         />
@@ -211,14 +198,16 @@ function StatCardDetails(props: { details: StatCardDetail[] }) {
       {props.details.map((detail) => (
         <div
           key={detail.label}
-          className='bg-muted/40 rounded-lg border border-transparent px-2.5 py-2'
+          className='border-border min-w-0 rounded-lg border px-2.5 py-2'
         >
-          <div className='text-muted-foreground truncate text-[11px] leading-none font-medium'>
+          <div
+            className={cn('truncate text-[10px] leading-none', OVERLINE_CLASS)}
+          >
             {detail.label}
           </div>
           <div
             className={cn(
-              'mt-1.5 truncate text-xs font-semibold tabular-nums',
+              'mt-1.5 truncate font-mono text-xs font-semibold tabular-nums',
               DETAIL_TONE_CLASSES[detail.tone ?? 'default']
             )}
             title={detail.value}
@@ -233,55 +222,31 @@ function StatCardDetails(props: { details: StatCardDetail[] }) {
 
 export function StatCard(props: StatCardProps) {
   const Icon = props.icon
-  const tone = props.tone ?? 'accent-3'
-  const iconTone = props.iconTone ?? ICON_TONE_BY_STAT_TONE[tone]
   const sparklineVariant = props.sparklineVariant ?? 'bars'
   let valueContent: ReactNode
   if (props.loading) {
     valueContent = (
-      <div
-        className={cn(
-          'flex flex-col',
-          props.compactMobile ? 'gap-1' : 'gap-1.5'
-        )}
-      >
-        <Skeleton className='h-5 w-16 sm:h-7 sm:w-24' />
-        <Skeleton
-          className={cn(
-            'h-3 w-24 sm:h-3.5 sm:w-32',
-            props.compactMobile && 'hidden sm:block'
-          )}
-        />
+      <div className='flex flex-col gap-2'>
+        <Skeleton className='h-10 w-24 rounded-lg' />
+        <Skeleton className='h-3 w-28 rounded-lg' />
       </div>
     )
   } else if (props.error) {
     valueContent = (
-      <div className='flex flex-col gap-1'>
-        <div className='text-muted-foreground mt-0.5 font-mono text-base font-bold tracking-tight break-all tabular-nums sm:text-2xl'>
-          --
-        </div>
-        <p
-          className={cn(
-            'text-muted-foreground/60 line-clamp-1 text-[11px] sm:text-xs',
-            props.compactMobile && 'hidden sm:block'
-          )}
-        >
+      <div className='flex flex-col gap-2'>
+        <div className={VALUE_CLASS}>--</div>
+        <p className='text-muted-foreground line-clamp-2 text-xs leading-relaxed'>
           {props.description}
         </p>
       </div>
     )
   } else {
     valueContent = (
-      <div className='flex flex-col gap-1'>
-        <div className='text-foreground font-mono text-base font-semibold tracking-tight break-all tabular-nums sm:text-2xl'>
+      <div className='flex flex-col gap-2'>
+        <div data-slot='stat-card-value' className={VALUE_CLASS}>
           {props.value}
         </div>
-        <p
-          className={cn(
-            'text-muted-foreground/60 line-clamp-1 text-[11px] leading-relaxed sm:text-xs',
-            props.compactMobile && 'hidden sm:block'
-          )}
-        >
+        <p className='text-muted-foreground line-clamp-2 text-xs leading-relaxed'>
           {props.description}
         </p>
       </div>
@@ -292,31 +257,28 @@ export function StatCard(props: StatCardProps) {
   if (props.details?.length) {
     visualization = <StatCardDetails details={props.details} />
   } else if (sparklineVariant === 'line') {
-    visualization = <LineSparkline values={props.sparkline} tone={tone} />
+    visualization = <LineSparkline values={props.sparkline} />
   } else {
-    visualization = <BarSparkline values={props.sparkline} tone={tone} />
+    visualization = <BarSparkline values={props.sparkline} />
   }
 
   return (
-    <div
-      className={cn(
-        'group flex flex-col justify-between sm:min-h-32 sm:gap-3',
-        props.compactMobile ? 'gap-1' : 'gap-1.5'
-      )}
+    <article
+      data-slot='stat-card'
+      className='flex h-full min-w-0 flex-col justify-between gap-5'
     >
-      <div className='flex items-start justify-between gap-1'>
-        <div className='text-muted-foreground flex items-center gap-1 text-[11px] font-medium sm:gap-2 sm:text-xs'>
-          <IconBadge
-            tone={iconTone}
-            size='stat'
-            className={cn(
-              props.compactMobile &&
-                'size-4 rounded-sm [&>svg]:size-2.5 sm:size-7 sm:rounded-md sm:[&>svg]:size-3.5'
-            )}
+      <div className='flex items-start justify-between gap-2'>
+        <div className='flex min-w-0 items-center gap-2'>
+          <span
+            className='bg-primary/10 text-primary flex size-7 shrink-0 items-center justify-center rounded-lg [&>svg]:size-3'
+            aria-hidden='true'
           >
             <Icon />
-          </IconBadge>
-          <span className='line-clamp-1 leading-snug sm:line-clamp-2'>
+          </span>
+          <span
+            data-slot='stat-card-label'
+            className={cn('line-clamp-2 text-[11px]', OVERLINE_CLASS)}
+          >
             {props.title}
           </span>
         </div>
@@ -326,6 +288,6 @@ export function StatCard(props: StatCardProps) {
       {valueContent}
 
       <div className='hidden sm:block'>{visualization}</div>
-    </div>
+    </article>
   )
 }

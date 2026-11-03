@@ -49,6 +49,9 @@ function ThemeControls() {
       <button type='button' onClick={() => customization.setFont('default')}>
         Auto font
       </button>
+      <button type='button' onClick={() => customization.setPreset('shenlan')}>
+        Shenlan preset
+      </button>
       <button
         type='button'
         onClick={() => customization.setPreset('anthropic')}
@@ -113,6 +116,32 @@ afterEach(() => {
 })
 
 describe('theme preference persistence', () => {
+  it('keeps an explicitly saved monochrome preset after the default changes', () => {
+    localStorage.setItem('newapi:theme:v1:preset', 'monochrome')
+
+    const first = render(<ThemeFixture />)
+    expect(document.body).toHaveAttribute('data-theme-preset', 'monochrome')
+
+    first.unmount()
+    render(<ThemeFixture />)
+
+    expect(document.body).toHaveAttribute('data-theme-preset', 'monochrome')
+    expect(localStorage.getItem('newapi:theme:v1:preset')).toBe('monochrome')
+  })
+
+  it('returns to Shenlan after selecting it and remounting', async () => {
+    localStorage.setItem('newapi:theme:v1:preset', 'rose-garden')
+    const user = userEvent.setup()
+    const first = render(<ThemeFixture />)
+
+    await user.click(screen.getByRole('button', { name: 'Shenlan preset' }))
+    first.unmount()
+    render(<ThemeFixture />)
+
+    expect(document.body).toHaveAttribute('data-theme-preset', 'shenlan')
+    expect(localStorage.getItem('newapi:theme:v1:preset')).toBeNull()
+  })
+
   it('starts with defaults when only shared legacy theme cookies exist', () => {
     document.cookie = 'theme_preset=ocean-breeze; path=/'
     document.cookie = 'vite-ui-theme=dark; path=/'
@@ -125,7 +154,7 @@ describe('theme preference persistence', () => {
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
     expect(document.documentElement).toHaveClass('light')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'shenlan')
     expect(document.body).toHaveAttribute('data-theme-font', 'system')
     expect(document.body).not.toHaveAttribute('data-theme-radius')
     expect(document.body).not.toHaveAttribute('data-theme-scale')
@@ -171,7 +200,7 @@ describe('theme preference persistence', () => {
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
     expect(document.documentElement).toHaveClass('light')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'shenlan')
     expect(document.body).toHaveAttribute('data-theme-font', 'system')
     expect(document.body).not.toHaveAttribute('data-theme-radius')
     expect(document.body).not.toHaveAttribute('data-theme-scale')
@@ -193,7 +222,7 @@ describe('theme preference persistence', () => {
       render(<ThemeFixture />)
 
       expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
-      expect(document.body).not.toHaveAttribute('data-theme-preset')
+      expect(document.body).toHaveAttribute('data-theme-preset', 'shenlan')
       expect(document.body).toHaveAttribute('data-theme-font', 'system')
       expect(document.body).not.toHaveAttribute('data-theme-radius')
       expect(document.body).not.toHaveAttribute('data-theme-scale')
@@ -209,7 +238,7 @@ describe('theme preference persistence', () => {
     render(<ThemeFixture />)
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'shenlan')
   })
 
   it('still applies and resets preferences when storage writes fail', async () => {
@@ -230,7 +259,7 @@ describe('theme preference persistence', () => {
     await user.click(screen.getByRole('button', { name: 'Reset' }))
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'shenlan')
   })
 
   it('preserves saved theme preferences during frontend cache initialization', () => {

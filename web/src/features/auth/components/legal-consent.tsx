@@ -52,7 +52,7 @@ export function LegalConsent({
   return (
     <div
       className={cn(
-        'border-border/60 bg-muted/40 flex items-start gap-3 rounded-md border p-3',
+        'border-input flex items-start gap-3 rounded-lg border p-3',
         className
       )}
     >
@@ -60,11 +60,11 @@ export function LegalConsent({
         id='legal-consent'
         checked={checked}
         onCheckedChange={handleChange}
-        className='mt-0.5'
+        className='mt-0.5 size-5'
       />
       <Label
         htmlFor='legal-consent'
-        className='text-muted-foreground items-start gap-1 text-left text-xs leading-5 font-normal'
+        className='text-foreground items-start gap-1 text-left text-sm leading-6 font-medium'
       >
         <span>
           {t('I have read and agree to the')}{' '}
@@ -78,7 +78,7 @@ export function LegalConsent({
               {t('User Agreement')}
             </a>
           )}
-          {hasUserAgreement && hasPrivacyPolicy && ' and the '}
+          {hasUserAgreement && hasPrivacyPolicy && <> {t('and')} </>}
           {hasPrivacyPolicy && (
             <a
               href='/privacy-policy'

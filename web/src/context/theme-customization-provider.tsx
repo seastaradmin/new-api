@@ -128,10 +128,10 @@ export function ThemeCustomizationProvider(props: {
   // Mirror state to the <body> via data-* attributes so theme-presets.css can
   // override CSS variables at the right cascade layer.
   useEffect(() => {
-    applyAttribute(
-      'data-theme-preset',
-      preset === DEFAULT_THEME_CUSTOMIZATION.preset ? null : preset
-    )
+    // `default` keeps the stock :root palette (no attribute); every named
+    // preset — including the fork's default `shenlan` — is mirrored to the
+    // body so its CSS block applies.
+    applyAttribute('data-theme-preset', preset === 'default' ? null : preset)
   }, [preset])
 
   // Resolve Auto into the preset font or the browser's sans-serif while

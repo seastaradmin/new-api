@@ -16,74 +16,54 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Settings, Zap, BarChart3 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
-import { AnimateInView } from '@/components/animate-in-view'
 
 export function HowItWorks() {
   const { t } = useTranslation()
-
   const steps = [
     {
-      num: '1',
-      title: t('Configure'),
-      desc: t(
-        'Add your API keys, set up channels and configure access permissions'
-      ),
-      icon: <Settings className='size-6' strokeWidth={1.5} />,
+      number: '01',
+      title: t('Choose your model'),
+      description: t('Find the model and pricing that fit your task.'),
     },
     {
-      num: '2',
-      title: t('Connect'),
-      desc: t(
-        'Connect through OpenAI, Claude, Gemini, and other compatible API routes'
-      ),
-      icon: <Zap className='size-6' strokeWidth={1.5} />,
+      number: '02',
+      title: t('Create your API key'),
+      description: t('Keep one key for each app so access is easy to manage.'),
     },
     {
-      num: '3',
-      title: t('Monitor'),
-      desc: t('Track usage, costs and performance with real-time analytics'),
-      icon: <BarChart3 className='size-6' strokeWidth={1.5} />,
+      number: '03',
+      title: t('Make your first request'),
+      description: t(
+        'Add your key to a compatible tool, or use it in your own code.'
+      ),
     },
   ]
 
   return (
-    <section className='border-border/40 relative z-10 border-t px-6 py-24 md:py-32'>
+    <section className='border-y border-blue-100/70 bg-blue-50/40 px-5 py-16 sm:px-8 md:py-20 dark:border-blue-400/10 dark:bg-blue-400/5'>
       <div className='mx-auto max-w-6xl'>
-        <AnimateInView className='mb-16 text-center md:mb-20'>
-          <p className='text-muted-foreground mb-3 text-xs font-medium tracking-widest uppercase'>
-            {t('How It Works')}
+        <div className='max-w-2xl'>
+          <p className='text-xs font-semibold tracking-wide text-blue-600 dark:text-blue-400'>
+            {t('A simple way to start')}
           </p>
-          <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>
-            {t('Three steps to get started')}
+          <h2 className='mt-4 text-3xl leading-[1.3] font-semibold tracking-tight text-balance sm:text-4xl'>
+            {t('Three steps to your next idea.')}
           </h2>
-        </AnimateInView>
-
-        <div className='grid gap-8 md:grid-cols-3 md:gap-12'>
-          {steps.map((step, i) => (
-            <AnimateInView
-              key={step.num}
-              delay={i * 150}
-              animation='fade-up'
-              className='relative flex flex-col items-center text-center'
-            >
-              <div className='relative mb-6'>
-                <div className='text-muted-foreground border-border/50 bg-muted/30 flex size-16 items-center justify-center rounded-2xl border transition-colors'>
-                  {step.icon}
-                </div>
-                <div className='bg-foreground text-background absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full text-xs font-bold'>
-                  {step.num}
-                </div>
-              </div>
-              <h3 className='mb-2 text-base font-semibold'>{step.title}</h3>
-              <p className='text-muted-foreground max-w-[240px] text-sm leading-relaxed'>
-                {step.desc}
-              </p>
-            </AnimateInView>
-          ))}
         </div>
+        <ol className='mt-10 grid gap-8 md:grid-cols-3 md:gap-12'>
+          {steps.map((step) => (
+            <li key={step.number} className='relative'>
+              <span className='bg-background inline-flex size-10 items-center justify-center rounded-full border border-blue-200 font-mono text-xs font-medium text-blue-600 dark:border-blue-400/30 dark:text-blue-300'>
+                {step.number}
+              </span>
+              <h3 className='mt-5 text-lg font-semibold'>{step.title}</h3>
+              <p className='text-muted-foreground mt-2 max-w-xs text-sm leading-7'>
+                {step.description}
+              </p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   )

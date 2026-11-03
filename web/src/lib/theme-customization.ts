@@ -25,6 +25,11 @@ For commercial licensing, please contact support@quantumnous.com
 
 export const THEME_PRESETS = [
   {
+    value: 'shenlan',
+    name: 'Shenlan',
+    swatches: ['#172d50', '#2b61e8'],
+  },
+  {
     value: 'default',
     name: 'Default',
     swatches: ['oklch(0.72 0.18 250)', 'oklch(0.7 0.12 280)'],
@@ -41,6 +46,13 @@ export const THEME_PRESETS = [
     value: 'simple-large',
     name: 'Simple Large-font',
     swatches: ['oklch(0.15 0 0)', 'oklch(0.99 0 0)'],
+  },
+  {
+    // Editorial paper/ink system: white stock, near-black ink, hairline
+    // borders and square corners. Swatches preview paper → ink.
+    value: 'monochrome',
+    name: 'Monochrome',
+    swatches: ['oklch(1 0 0)', 'oklch(0.145 0 0)'],
   },
   {
     value: 'underground',
@@ -111,8 +123,12 @@ export type ThemeCustomization = {
   contentLayout: ContentLayout
 }
 
+/**
+ * Shenlan pairs navy text and blue accents with calm surfaces and rounded
+ * controls. Existing presets remain available as explicit user preferences.
+ */
 export const DEFAULT_THEME_CUSTOMIZATION: ThemeCustomization = {
-  preset: 'default',
+  preset: 'shenlan',
   font: 'default',
   radius: 'default',
   scale: 'default',

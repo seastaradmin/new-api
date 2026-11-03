@@ -32,6 +32,72 @@ For commercial licensing, please contact support@quantumnous.com
  *   blocks so an explicit user choice overrides the preset's default radius.
  */
 
+/* ── Shenlan ──────────────────────────────────────────────────────────── */
+[data-theme-preset='shenlan'] {
+  --background: #f5f8fd;
+  --foreground: #172d50;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --primary: #2b61e8;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf0fd;
+  --secondary-foreground: #254d9a;
+  --muted: #edf2fa;
+  --muted-foreground: #5b6c85;
+  --accent: #e6efff;
+  --accent-foreground: #244d9c;
+  --border: #dfe7f3;
+  --input: #cdd9eb;
+  --ring: var(--primary);
+  --chart-1: #2b61e8;
+  --chart-2: #13859b;
+  --chart-3: #7564cc;
+  --chart-4: #c78225;
+  --chart-5: #27866a;
+  --overview-accent-1: var(--chart-1);
+  --overview-accent-2: var(--chart-2);
+  --overview-accent-3: var(--chart-3);
+  --sidebar: #f8faff;
+  --sidebar-foreground: #344968;
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --skeleton-base: var(--muted);
+  --skeleton-highlight: var(--card);
+  --table-row: var(--card);
+  --table-header: var(--muted);
+  --table-header-hover: var(--accent);
+  --radius: 0.75rem;
+}
+.dark [data-theme-preset='shenlan'] {
+  --background: #0c1525;
+  --foreground: #e5edfc;
+  --card: #122038;
+  --popover: #17263f;
+  --primary: #8eaeff;
+  --primary-foreground: #10234b;
+  --secondary: #1d3153;
+  --secondary-foreground: #c5d6ff;
+  --muted: #1a2a43;
+  --muted-foreground: #a0b1cb;
+  --accent: #20385e;
+  --accent-foreground: #c7d8ff;
+  --border: #283c5b;
+  --input: #3c5274;
+  --chart-1: #8eaeff;
+  --chart-2: #58c4d2;
+  --chart-3: #b6a7f5;
+  --chart-4: #e3b76f;
+  --chart-5: #76c8aa;
+  --sidebar: #101b2e;
+  --sidebar-foreground: #b8c8e2;
+}
+
 /* ── Underground ──────────────────────────────────────────────────────── */
 [data-theme-preset='underground'] {
   --primary: oklch(0.5315 0.0694 156.19);
@@ -426,10 +492,15 @@ For commercial licensing, please contact support@quantumnous.com
  *   - `anthropic`: warm cream surfaces are a brand choice, NOT a primary-mix
  *     derivation (the Anthropic system deliberately uses warm neutrals for
  *     cards/borders rather than tinting them with the clay accent).
- *   - `simple-large`: keeps intentionally neutral, high-contrast surfaces. */
+ *   - `simple-large`: keeps intentionally neutral, high-contrast surfaces.
+ *   - `shenlan`: defines its own light and dark blue surfaces.
+ *   - `monochrome`: editorial paper/ink system; its neutral surfaces are the
+ *     design intent, so primary-tinted derivations would muddy the paper look. */
 [data-theme-preset]:not([data-theme-preset='default']):not(
-  [data-theme-preset='anthropic']
-):not([data-theme-preset='simple-large']) {
+    [data-theme-preset='anthropic']
+  ):not([data-theme-preset='shenlan']):not(
+    [data-theme-preset='simple-large']
+  ):not([data-theme-preset='monochrome']) {
   --card: color-mix(in oklch, var(--primary) 3%, var(--background));
   --popover: color-mix(in oklch, var(--primary) 5%, var(--background));
   --muted: color-mix(in oklch, var(--primary) 7%, var(--background));
@@ -454,7 +525,9 @@ For commercial licensing, please contact support@quantumnous.com
 .dark
   [data-theme-preset]:not([data-theme-preset='default']):not(
     [data-theme-preset='anthropic']
-  ):not([data-theme-preset='simple-large']) {
+  ):not([data-theme-preset='shenlan']):not(
+    [data-theme-preset='simple-large']
+  ):not([data-theme-preset='monochrome']) {
   --card: color-mix(in oklch, var(--primary) 8%, var(--background));
   --popover: color-mix(in oklch, var(--primary) 12%, var(--background));
   --muted: color-mix(in oklch, var(--primary) 12%, var(--background));
@@ -610,6 +683,86 @@ For commercial licensing, please contact support@quantumnous.com
 
   --skeleton-base: oklch(0.305 0.004 60);
   --skeleton-highlight: oklch(0.41 0.004 60);
+}
+
+/* ── Monochrome ───────────────────────────────────────────────────────── */
+/*
+ * Editorial paper/ink system derived from the "黑白简约" console design:
+ * pure-white paper, near-black ink, hairline borders, square corners, and a
+ * single non-color accent (ink itself). Surfaces stay neutral instead of being
+ * tinted by the primary, which is why this preset opts out of the semantic
+ * surface bridge above.
+ *
+ * Color is reserved for data and state (charts, success/warning/destructive);
+ * everything structural is black, white, or a neutral step between them.
+ */
+[data-theme-preset='monochrome'] {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+
+  --primary: oklch(0.145 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+
+  --muted: oklch(0.965 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.945 0 0);
+  --accent-foreground: oklch(0.145 0 0);
+
+  --border: oklch(0.89 0 0);
+  --input: oklch(0.89 0 0);
+  --ring: oklch(0.145 0 0);
+
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.145 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.945 0 0);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.89 0 0);
+  --sidebar-ring: oklch(0.145 0 0);
+
+  --radius: 0rem;
+}
+.dark [data-theme-preset='monochrome'] {
+  /* Inverted paper: near-black stock with warm-neutral ink, not pure #000,
+   * so elevation and hairlines stay readable. */
+  --background: oklch(0.135 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.165 0 0);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.96 0 0);
+
+  --primary: oklch(0.96 0 0);
+  --primary-foreground: oklch(0.135 0 0);
+  --secondary: oklch(0.235 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
+
+  --muted: oklch(0.215 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.26 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: oklch(0.96 0 0);
+
+  --sidebar: oklch(0.15 0 0);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.96 0 0);
+  --sidebar-primary-foreground: oklch(0.135 0 0);
+  --sidebar-accent: oklch(0.26 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.96 0 0);
+
+  --radius: 0rem;
 }
 
 /* ── Font axis ────────────────────────────────────────────────────────────

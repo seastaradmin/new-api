@@ -19,7 +19,11 @@ For commercial licensing, please contact support@quantumnous.com
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useCallback } from 'react'
 
-import { DEFAULT_LOGO } from '@/lib/constants'
+import {
+  DEFAULT_SITE_LOGO,
+  getSiteDisplayLogo,
+  getSiteDisplayName,
+} from '@/lib/constants'
 import { applyFaviconToDom } from '@/lib/dom-utils'
 import { ensureStatus } from '@/lib/status-query'
 import { useSystemConfigStore } from '@/stores/system-config-store'
@@ -62,6 +66,8 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
   const queryClient = useQueryClient()
   const { config, loading, loadedLogoUrl, setLoadedLogoUrl, setLoading } =
     useSystemConfigStore()
+  const systemName = getSiteDisplayName(config.systemName)
+  const logo = getSiteDisplayLogo(config.logo)
 
   // Load config from backend via the shared `/api/status` cache.
   // `ensureStatus` writes the mapped config into this store itself, so there is
@@ -82,10 +88,15 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
     if (autoLoad) loadConfig()
   }, [autoLoad, loadConfig])
 
+  useEffect(() => {
+    if (autoLoad) {
+      document.title = systemName
+      applyFaviconToDom(logo)
+    }
+  }, [autoLoad, logo, systemName])
+
   // Preload logo image when URL changes
   useEffect(() => {
-    const { logo } = config
-
     // Skip if logo is already loaded
     if (!logo || logo === loadedLogoUrl) return
 
@@ -97,7 +108,7 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
         applyFaviconToDom(logo)
       },
       () => {
-        if (logo !== DEFAULT_LOGO) {
+        if (logo !== DEFAULT_SITE_LOGO) {
           // eslint-disable-next-line no-console
           console.error('Failed to load logo:', logo)
         }
@@ -106,11 +117,13 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.logo, loadedLogoUrl, setLoadedLogoUrl])
+  }, [logo, loadedLogoUrl, setLoadedLogoUrl])
 
   return {
     ...config,
+    systemName,
+    logo,
     loading,
-    logoLoaded: config.logo === loadedLogoUrl && !!loadedLogoUrl,
+    logoLoaded: logo === loadedLogoUrl && !!loadedLogoUrl,
   }
 }

@@ -34,12 +34,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { login, wechatLoginByCode } from '@/features/auth/api'
+import { AuthFieldLabel } from '@/features/auth/components/auth-field-label'
 import { LegalConsent } from '@/features/auth/components/legal-consent'
 import { OAuthProviders } from '@/features/auth/components/oauth-providers'
 import { loginFormSchema } from '@/features/auth/constants'
@@ -308,7 +308,7 @@ export function UserAuthForm({
             variant='outline'
             disabled={passkeyButtonDisabled}
             onClick={handlePasskeyLogin}
-            className='h-11 w-full justify-center gap-2 rounded-lg'
+            className='h-11 w-full justify-center gap-2'
           >
             {isPasskeyLoading ? (
               <Loader2 className='h-4 w-4 animate-spin' />
@@ -358,10 +358,11 @@ export function UserAuthForm({
               control={form.control}
               name='username'
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('Username or Email')}</FormLabel>
+                <FormItem className='gap-1.5'>
+                  <AuthFieldLabel>{t('Username or Email')}</AuthFieldLabel>
                   <FormControl>
                     <Input
+                      autoComplete='username'
                       placeholder={t('Enter your username or email')}
                       {...field}
                     />
@@ -376,21 +377,24 @@ export function UserAuthForm({
               control={form.control}
               name='password'
               render={({ field }) => (
-                <FormItem className='relative'>
-                  <FormLabel>{t('Password')}</FormLabel>
+                <FormItem className='gap-1.5'>
+                  <div className='flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1'>
+                    <AuthFieldLabel>{t('Password')}</AuthFieldLabel>
+                    <Link
+                      to='/forgot-password'
+                      className='text-muted-foreground hover:text-foreground text-sm font-medium underline underline-offset-4'
+                    >
+                      {t('Forgot password?')}
+                    </Link>
+                  </div>
                   <FormControl>
                     <PasswordInput
+                      autoComplete='current-password'
                       placeholder={t('Enter password')}
                       {...field}
                     />
                   </FormControl>
                   <FormMessage />
-                  <Link
-                    to='/forgot-password'
-                    className='text-muted-foreground absolute end-0 -top-0.5 z-10 text-sm font-medium hover:opacity-75'
-                  >
-                    {t('Forgot password?')}
-                  </Link>
                 </FormItem>
               )}
             />
@@ -398,10 +402,14 @@ export function UserAuthForm({
             {/* Submit Button */}
             <Button
               type='submit'
-              className='mt-2 w-full justify-center gap-2'
+              className='mt-2 h-10 w-full justify-center gap-2'
               disabled={isLoading}
             >
-              {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
+              {isLoading ? (
+                <Loader2 className='animate-spin' aria-hidden='true' />
+              ) : (
+                <LogIn aria-hidden='true' />
+              )}
               {t('Sign in')}
             </Button>
 

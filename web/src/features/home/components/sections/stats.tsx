@@ -105,24 +105,26 @@ export function Stats(_props: StatsProps) {
   ]
 
   return (
-    <div className='border-border/40 bg-muted/10 relative z-10 border-y'>
-      <div className='mx-auto max-w-6xl px-6 py-10 md:py-12'>
-        <div className='grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12'>
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className='flex flex-col items-center text-center'
-            >
-              <span className='text-2xl font-bold tracking-tight md:text-3xl'>
-                <Counter end={s.end} suffix={s.suffix} decimals={s.decimals} />
-              </span>
-              <span className='text-muted-foreground mt-1.5 text-xs'>
-                {s.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className='border-border border-y'>
+      <dl className='divide-border mx-auto grid max-w-6xl grid-cols-1 divide-y px-5 sm:px-8 md:grid-cols-4 md:divide-x md:divide-y-0'>
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className='flex flex-col-reverse gap-3 py-8 sm:py-10 md:px-8 md:py-12 md:first:pl-0 md:last:pr-0'
+          >
+            <dt className='text-muted-foreground font-mono text-[11px] font-semibold tracking-[0.14em] uppercase'>
+              {stat.label}
+            </dt>
+            <dd className='font-serif text-4xl leading-none font-medium tracking-[-0.04em] tabular-nums sm:text-5xl md:text-6xl'>
+              <Counter
+                end={stat.end}
+                suffix={stat.suffix}
+                decimals={stat.decimals}
+              />
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   )
 }

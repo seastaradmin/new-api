@@ -33,12 +33,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { register, wechatLoginByCode } from '@/features/auth/api'
+import { AuthFieldLabel } from '@/features/auth/components/auth-field-label'
 import { LegalConsent } from '@/features/auth/components/legal-consent'
 import { OAuthProviders } from '@/features/auth/components/oauth-providers'
 import { registerFormSchema } from '@/features/auth/constants'
@@ -248,7 +248,7 @@ export function SignUpForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-4', className)}
+        className={cn('grid gap-5', className)}
         {...props}
       >
         {/* Username Field */}
@@ -256,8 +256,8 @@ export function SignUpForm({
           control={form.control}
           name='username'
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('Username')}</FormLabel>
+            <FormItem className='gap-1.5'>
+              <AuthFieldLabel>{t('Username')}</AuthFieldLabel>
               <FormControl>
                 <Input placeholder={t('Enter your username')} {...field} />
               </FormControl>
@@ -271,8 +271,8 @@ export function SignUpForm({
           control={form.control}
           name='password'
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('Password')}</FormLabel>
+            <FormItem className='gap-1.5'>
+              <AuthFieldLabel>{t('Password')}</AuthFieldLabel>
               <FormControl>
                 <PasswordInput
                   placeholder={t('Enter password (8–128 characters)')}
@@ -289,8 +289,8 @@ export function SignUpForm({
           control={form.control}
           name='confirmPassword'
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('Confirm password')}</FormLabel>
+            <FormItem className='gap-1.5'>
+              <AuthFieldLabel>{t('Confirm password')}</AuthFieldLabel>
               <FormControl>
                 <PasswordInput placeholder={t('Confirm password')} {...field} />
               </FormControl>
@@ -307,10 +307,10 @@ export function SignUpForm({
               control={form.control}
               name='email'
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
+                <FormItem className='gap-1.5'>
+                  <AuthFieldLabel>
                     {t('Email (required for verification)')}
-                  </FormLabel>
+                  </AuthFieldLabel>
                   <FormControl>
                     <Input
                       placeholder={t('name@example.com')}
@@ -371,14 +371,16 @@ export function SignUpForm({
         {/* Submit Button */}
         <Button
           type='submit'
-          className='mt-2 w-full justify-center gap-2'
+          className='mt-1 h-10 w-full justify-center gap-2'
           disabled={
             isLoading ||
             (requiresLegalConsent && !agreedToLegal) ||
             !turnstileReady
           }
         >
-          {isLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : null}
+          {isLoading ? (
+            <Loader2 className='h-4 w-4 animate-spin' aria-hidden='true' />
+          ) : null}
           {t('Create account')}
         </Button>
 

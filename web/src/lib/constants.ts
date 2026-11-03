@@ -22,7 +22,19 @@ For commercial licensing, please contact support@quantumnous.com
 
 // System Configuration Defaults
 export const DEFAULT_SYSTEM_NAME = 'New API'
+export const DEFAULT_SITE_NAME = '深蓝'
 export const DEFAULT_LOGO = '/logo.png'
+export const DEFAULT_SITE_LOGO = '/shenlan-logo.png'
+
+export function getSiteDisplayName(systemName?: string): string {
+  return !systemName || systemName === DEFAULT_SYSTEM_NAME
+    ? DEFAULT_SITE_NAME
+    : systemName
+}
+
+export function getSiteDisplayLogo(logo?: string): string {
+  return !logo || logo === DEFAULT_LOGO ? DEFAULT_SITE_LOGO : logo
+}
 
 // LocalStorage Keys
 export const STORAGE_KEYS = {

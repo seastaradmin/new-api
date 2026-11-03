@@ -20,8 +20,8 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { AnimateInView } from '@/components/animate-in-view'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface CTAProps {
   className?: string
@@ -31,54 +31,46 @@ interface CTAProps {
 export function CTA(props: CTAProps) {
   const { t } = useTranslation()
 
-  if (props.isAuthenticated) {
-    return null
-  }
-
   return (
-    <section className='relative z-10 overflow-hidden px-6 py-24 md:py-32'>
-      {/* Gradient mesh background */}
-      <div
-        aria-hidden
-        className='absolute inset-0 -z-10 opacity-20 dark:opacity-[0.08]'
-        style={{
-          background: [
-            'radial-gradient(ellipse 50% 50% at 30% 50%, oklch(0.7 0.15 250 / 70%) 0%, transparent 70%)',
-            'radial-gradient(ellipse 40% 40% at 70% 40%, oklch(0.65 0.12 200 / 50%) 0%, transparent 70%)',
-          ].join(', '),
-        }}
-      />
-
-      <AnimateInView
-        className='mx-auto max-w-2xl text-center'
-        animation='scale-in'
-      >
-        <h2 className='text-2xl leading-tight font-bold tracking-tight md:text-4xl'>
-          {t('Ready to simplify')}
-          <br />
-          <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
-            {t('your AI integration?')}
-          </span>
-        </h2>
-        <p className='text-muted-foreground/80 mx-auto mt-5 max-w-md text-sm leading-relaxed md:text-base'>
-          {t(
-            'Deploy your own gateway and start routing requests through your configured upstream services.'
-          )}
-        </p>
-        <div className='mt-8 flex items-center justify-center gap-3'>
-          <Button className='group rounded-lg' render={<Link to='/sign-up' />}>
-            {t('Get Started')}
-            <ArrowRight className='ml-1 size-3.5 transition-transform duration-200 group-hover:translate-x-0.5' />
-          </Button>
-          <Button
-            variant='outline'
-            className='border-border/50 hover:border-border hover:bg-muted/50 rounded-lg'
-            render={<Link to='/pricing' />}
-          >
-            {t('View Pricing')}
-          </Button>
+    <section className={cn('px-5 py-16 sm:px-8 md:py-20', props.className)}>
+      <div className='relative isolate mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-[#103e8b] px-7 py-12 text-white sm:px-12 sm:py-16'>
+        <div
+          aria-hidden
+          className='pointer-events-none absolute -top-44 -right-20 -z-10 size-[32rem] rounded-full border border-white/10 bg-blue-400/10'
+        />
+        <div
+          aria-hidden
+          className='pointer-events-none absolute -top-32 -right-8 -z-10 size-[26rem] rounded-full border border-white/10'
+        />
+        <div className='flex flex-col justify-between gap-8 lg:flex-row lg:items-center lg:gap-12'>
+          <div className='max-w-xl'>
+            <h2 className='text-3xl leading-[1.3] font-semibold tracking-tight text-balance sm:text-4xl'>
+              {t('Ready for your next idea?')}
+            </h2>
+            <p className='mt-4 text-sm leading-7 text-blue-100 sm:text-base'>
+              {t('Start with a model. See where it takes you.')}
+            </p>
+          </div>
+          <div className='flex flex-wrap items-center gap-3'>
+            <Button
+              className='h-12 gap-2.5 rounded-full bg-white px-6 text-sm font-semibold text-blue-900 focus-visible:ring-white/50 [a]:hover:bg-blue-50'
+              render={
+                <Link to={props.isAuthenticated ? '/dashboard' : '/sign-up'} />
+              }
+            >
+              {props.isAuthenticated ? t('Go to Dashboard') : t('Get Started')}
+              <ArrowRight className='size-4' aria-hidden />
+            </Button>
+            <Button
+              variant='outline'
+              className='h-12 rounded-full border-white/30 bg-transparent px-6 text-sm text-white hover:bg-white/10 hover:text-white focus-visible:ring-white/50 dark:border-white/30 dark:bg-transparent dark:hover:bg-white/10'
+              render={<Link to='/pricing' />}
+            >
+              {t('View Pricing')}
+            </Button>
+          </div>
         </div>
-      </AnimateInView>
+      </div>
     </section>
   )
 }

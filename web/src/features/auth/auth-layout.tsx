@@ -29,35 +29,43 @@ type AuthLayoutProps = {
 export function AuthLayout({ children }: AuthLayoutProps) {
   const { t } = useTranslation()
   const { systemName, logo, loading } = useSystemConfig()
+  const currentYear = new Date().getFullYear()
 
   return (
-    <div className='relative grid h-svh max-w-none'>
-      <Link
-        to='/'
-        className='absolute top-4 left-4 z-10 flex items-center gap-2 transition-opacity hover:opacity-80 sm:top-8 sm:left-8'
-      >
-        <div className='relative h-8 w-8'>
+    <div className='bg-background text-foreground flex min-h-svh flex-col px-5 sm:px-8'>
+      <header className='flex h-20 shrink-0 items-center sm:h-24'>
+        <Link
+          to='/'
+          className='inline-flex min-w-0 items-center gap-2.5 transition-opacity hover:opacity-70'
+        >
+          <div className='flex size-8 shrink-0 items-center justify-center overflow-hidden'>
+            {loading ? (
+              <Skeleton className='size-full' />
+            ) : (
+              <img
+                src={logo}
+                alt={t('Logo')}
+                className='size-full object-contain'
+              />
+            )}
+          </div>
           {loading ? (
-            <Skeleton className='absolute inset-0 rounded-full' />
+            <Skeleton className='h-6 w-24' />
           ) : (
-            <img
-              src={logo}
-              alt={t('Logo')}
-              className='h-8 w-8 rounded-full object-cover'
-            />
+            <span className='truncate text-xl font-semibold tracking-tight'>
+              {systemName}
+            </span>
           )}
-        </div>
-        {loading ? (
-          <Skeleton className='h-6 w-24' />
-        ) : (
-          <h1 className='text-xl font-medium'>{systemName}</h1>
-        )}
-      </Link>
-      <div className='container flex items-center pt-16 sm:pt-0'>
-        <div className='mx-auto flex w-full flex-col justify-center space-y-2 px-4 py-8 sm:w-[480px] sm:p-8'>
-          {children}
-        </div>
-      </div>
+        </Link>
+      </header>
+
+      <main className='mx-auto flex w-full max-w-[26rem] flex-1 flex-col justify-center py-8 sm:py-12'>
+        <section aria-label={t('Authentication')}>{children}</section>
+      </main>
+
+      <footer className='text-muted-foreground pb-8 text-center text-xs leading-6 sm:pb-12'>
+        &copy; {currentYear} {systemName}. {t('footer.defaultCopyright')}
+      </footer>
     </div>
   )
 }

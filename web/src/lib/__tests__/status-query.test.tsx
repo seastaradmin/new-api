@@ -22,6 +22,7 @@ import type { ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { useStatus } from '@/hooks/use-status'
+import { useSystemConfig } from '@/hooks/use-system-config'
 import { api } from '@/lib/api'
 import {
   getModuleAccessForGuard,
@@ -47,13 +48,14 @@ const originalGet = apiClient.get
 
 let statusRequests: string[] = []
 const queryClients: QueryClient[] = []
+const originalTitle = document.title
 
 /** Count `/api/status` calls at the network boundary and serve `system_name`. */
-function stubStatusEndpoint(systemName: string): void {
+function stubStatusEndpoint(systemName: string, logo?: string): void {
   apiClient.get = async (url) => {
     if (url !== '/api/status') throw new Error(`Unexpected GET ${url}`)
     statusRequests.push(url)
-    return { data: { success: true, data: { system_name: systemName } } }
+    return { data: { success: true, data: { system_name: systemName, logo } } }
   }
 }
 
@@ -87,6 +89,62 @@ afterEach(() => {
   apiClient.get = originalGet
   window.localStorage.clear()
   useSystemConfigStore.setState(useSystemConfigStore.getInitialState(), true)
+  document.title = originalTitle
+})
+
+describe('site branding', () => {
+  test.each([
+    {
+      systemName: '',
+      logo: undefined,
+      displayName: '深蓝',
+      displayLogo: '/shenlan-logo.png',
+    },
+    {
+      systemName: 'New API',
+      logo: '',
+      displayName: '深蓝',
+      displayLogo: '/shenlan-logo.png',
+    },
+    {
+      systemName: 'New API',
+      logo: '/logo.png',
+      displayName: '深蓝',
+      displayLogo: '/shenlan-logo.png',
+    },
+    {
+      systemName: 'Custom Gateway',
+      logo: '/custom-gateway.png',
+      displayName: 'Custom Gateway',
+      displayLogo: '/custom-gateway.png',
+    },
+  ])(
+    'uses $displayName and $displayLogo after loading $systemName with logo $logo',
+    async ({ systemName, logo, displayName, displayLogo }) => {
+      stubStatusEndpoint(systemName, logo)
+      const queryClient = createQueryClient()
+      const hook = renderHook(() => useSystemConfig({ autoLoad: true }), {
+        wrapper: wrapper(queryClient),
+      })
+
+      expect(hook.result.current.systemName).toBe('深蓝')
+
+      await waitFor(() => expect(hook.result.current.loading).toBe(false))
+
+      expect(hook.result.current.systemName).toBe(displayName)
+      expect(hook.result.current.logo).toBe(displayLogo)
+      expect(document.title).toBe(displayName)
+      expect(document.querySelector('link[rel="icon"]')).toHaveAttribute(
+        'href',
+        displayLogo
+      )
+      expect(queryClient.getQueryData(STATUS_QUERY_KEY)).toEqual({
+        system_name: systemName,
+        logo,
+      })
+      expect(statusRequests).toHaveLength(1)
+    }
+  )
 })
 
 describe('shared status query deduplication', () => {
